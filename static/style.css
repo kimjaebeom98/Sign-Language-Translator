@@ -1,0 +1,131 @@
+#video {
+	transform: rotateY(180deg);
+	-webkit-transform:rotateY(180deg); /* Safari and Chrome */
+	-moz-transform:rotateY(180deg); /* Firefox */
+	
+}
+
+.ex-layout {
+	float:left;
+	width: 640px;
+}
+.ex-layout .gnb{
+	padding: 15px;
+	background-color: #7FFFD4;
+	font-weight: bold;
+}
+.ex-layout .main{
+	background-color: white;
+}
+.ex-layout .main:after{ clear: both; display: block; content: '' }
+
+.ex-layout .main #container{
+	width : 640px;
+	height : 480px;
+	overflow: hidden;
+	margin: 0px auto; 
+	position: relative;
+
+}
+
+.ex-layout .footer{
+	width : 610px;
+	height: 100px;
+	padding: 15px;
+	background-color: #7FFFD4
+}
+
+.ex-layout .item.last {
+	float: right;
+	border-right: none;
+}
+
+a.button {
+	color: rgba(30, 22, 54, 0.6);
+	box-shadow: rgba(30, 22, 54, 0.4) 0 0px 0px 2px inset;
+}
+
+a.button:hover {
+	color: rgba(255, 255, 255, 0.85);
+	box-shadow: rgba(30, 22, 54, 0.7) 0 0px 0px 40px inset;
+}
+
+a.button2 {
+	color: rgba(30, 22, 54, 0.6);
+	box-shadow: rgba(30, 22, 54, 0.4) 0 0px 0px 2px inset;
+}
+
+a.button2:hover {
+	color: rgba(255, 255, 255, 0.85);
+	box-shadow: rgba(30, 22, 54, 0.7) 0 0px 0px 40px inset;
+}
+a.button3 {
+	color: rgba(30, 22, 54, 0.6);
+	box-shadow: rgba(30, 22, 54, 0.4) 0 0px 0px 2px inset;
+}
+
+a.button3:hover {
+	color: rgba(255, 255, 255, 0.85);
+	box-shadow: rgba(30, 22, 54, 0.7) 0 0px 0px 40px inset;
+}
+
+
+a {
+	-webkit-transition: all 200ms cubic-bezier(0.390, 0.500, 0.150, 1.360);
+	-moz-transition: all 200ms cubic-bezier(0.390, 0.500, 0.150, 1.360);
+	-ms-transition: all 200ms cubic-bezier(0.390, 0.500, 0.150, 1.360);
+	-o-transition: all 200ms cubic-bezier(0.390, 0.500, 0.150, 1.360);
+	transition: all 200ms cubic-bezier(0.390, 0.500, 0.150, 1.360);
+	text-decoration: none;
+	padding: 5px 20px;
+	margin-bottom: 0px;
+}
+
+
+.outline {
+	position : absolute;
+	left: 240px; top: 30px; 
+	width : 130px;
+	height : 130px;
+	padding : 20px;
+	border : 2px dashed white;
+}
+.inner {
+	position : absolute;
+	left: 255px; top:45px;
+	width : 100px;
+	height : 100px;
+	padding : 20px;
+	border : 2px dashed white;
+
+}
+canvas {
+	position: absolute;
+	}
+body {
+	margin: 0;
+	padding: 0;
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	}
+textarea{
+	font-weight:bold;
+	font-size: 16px;
+	text-align:center;
+	width: 100%;
+	height: 95px;
+	border: solid 2px white;
+}
+
+
+#count_box{
+	position : absolute;
+	left: 400px; top:5px;
+	text-align:right;
+	font-weight: bold ;
+ }
+ 
+ 

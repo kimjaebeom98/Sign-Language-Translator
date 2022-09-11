@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link href="{{url_for('static', filename = 'style.css')}}" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.0/socket.io.js'></script>
+    <script src = "{{ url_for('static', filename = 'face-api.min.js') }}"></script> 
+</head>
+<body>
+    <div class="ex-layout">
+        <div class="gnb">수어 번역기
+            <div class="item last">
+                <a href="#" onclick = start() class="button">시작하기</a>
+                <a href="#" class="button2">단어삭제</a>
+                <a href="#" class="button3">번역하기</a>
+            </div>
+        </div>
+        <div class="main">
+            <div id="container">
+                <video autoplay playsinline id="videoElement"></video>
+                <canvas id="canvas"  width="640" height="480"></canvas>
+                <div id = "jb-text"></div>
+                <div id = "count_box">
+                    <p id = "frame_count" style = 'margin-left : 80px; font-size:23px; color :red'></p>
+                </div>
+                <div class = "outline" id="boxes"></div>
+                <div class = "inner" id="boxes"></div>
+            </div>
+        </div>
+        <div class="footer">
+            <textarea id = "result" ></textarea>
+        </div>
+    </div>
+    <script type="text/javascript" charset="utf-8">
+        
+        
+        var socket = io.connect(window.location.protocol + '//' + document.domain + ':' + location.port);
+        socket.on('connect', function(){
+            console.log("Connected...!", socket.connected)
+        });
+        
+        var canvas = document.getElementById('canvas'); // 인자의 id의 요소에 접근할 수 있음 즉 video 변수를 이용해 사용자 video 접근 및 설정가능 
+        var context = canvas.getContext('2d'); //getContext("2d") 객체는 내장된 HTML5 객체로써, 경로, 상자, 원, 텍스트, 이미지 등을 그리기 위한 많은 속성과 방법을 가짐
+        const video = document.querySelector("#videoElement");
+        frame_count = document.getElementById('frame_count')
+        str='';
+        jb = document.getElementById('jb-text');
+        var flag = 0;
+        
+        video.width = 640;
+        video.height = 480; 
+
+        count_word = 0;
+
+
+        function start(){
+            if (navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function (stream) {
+                video.srcObject = stream;
+                video.play();
+                start_message();
+            })
+            .catch(function (err0r) {
+
+            });
+            }
+        }
+        // start 메시지
+        function start_message(){
+            var st_message = document.getElementById('result');
+            st_message.innerHTML=" 번역을 시작합니다. ";
+
+        }
+        // 위치조정 메시지
+        function move_position_message(){
+            var mv_message = document.getElementById('result');
+            result.innerHTML = "사각형에 얼굴을 맞춰주세요."
+        }
+        function change_color(){
+            var boxes = document.querySelectorAll('#boxes');
+            boxes[0].setAttribute('style', 'border-color : red;');
+            boxes[1].setAttribute('style', 'border-color : red;');
+            clearInterval(interval);
+            translate();
+        }
+        function startVideo() {
+                navigator.mediaDevices
+                    .getUserMedia({ video: true })
+                    .then(function (stream) {
+                    video.srcObject = stream;
+                    move_position_message();
+                    })
+                    .catch(function (err) {
+                    console.log(err);
+                    });
+        }
+        
+        // 사용자 위치 조정
+        var rs3 = document.querySelector(".button3");
+        rs3.onclick = function rect_print(){
+            if(flag == 0){
+                flag = 1;
+                Promise.all([
+                faceapi.nets.tinyFaceDetector.loadFromUri('static/models'),
+                faceapi.nets.faceLandmark68Net.loadFromUri('static/models'),
+                faceapi.nets.faceRecognitionNet.loadFromUri('static/models'),
+                faceapi.nets.faceExpressionNet.loadFromUri('static/models'),
+                faceapi.nets.ssdMobilenetv1.loadFromUri('static/models')
+                ]).then(startVideo)
+
+                video.addEventListener('play', () => {
+                // canvas를 초기화 함
+                cs = faceapi.createCanvasFromMedia(video);
+                displaySize = { width: video.width, height: video.height };
+                faceapi.matchDimensions(cs, displaySize);
+                // 100ms 마다 화면에 video frame이 표시 됨
+                interval = setInterval(it, 1000/30);
+            })
+            }
+            else{
+                start_message();
+                translate();
+            }
+        }
+        
+        async function it(){
+            // video에서 얼굴을 식별
+            const detections = await faceapi.detectAllFaces(video).withFaceLandmarks().withFaceDescriptors()
+                const resizedDetections = faceapi.resizeResults(detections, displaySize)
+                cs.getContext('2d').clearRect(0, 0, cs.width, cs.height)
+                // video에서 얼굴 좌표에 box를 그림
+                resizedDetections.forEach(detection => {
+                const box = detection.detection.box
+                const drawBox = new faceapi.draw.DrawBox(box, {label: 'Face'})
+                drawBox.draw(cs)
+                // box의 좌표 값과 너비, 길이를 콘솔창에 출력
+                // console.log(box.x, box.y, box.width, box.height)
+                console.log(box.x, box.y);
+                if ((box.x > 220) && (box.x < 290)){
+                    if((box.y > 65) && (box.y < 90)){
+                        var mv_message = document.getElementById('result');
+                        result.innerHTML = " 현재 위치에서 번역을 시작 해 주시길 바랍니다."
+                        change_color();
+                        return;
+                    }
+                }
+            })
+        }
+        
+        var rs2 = document.querySelector(".button2");
+        rs2.onclick = function remove_word(){
+            socket.emit('image', "delete");
+            clearTimeout(timer);
+        }
+
+        socket.on('delete_back', function(data){
+            count = 0;
+            count_word--;
+            str = str_save;
+            var infoEl= document.getElementById('result'); 
+                infoEl.value = data + "\n" + str;
+            translate();
+        });
+
+        socket.on('result', function(data){
+            count_word++;
+            clearTimeout(timer);
+            str = '';
+            var infoEl= document.getElementById('result'); 
+            infoEl.value = data;
+            count_word = 0;
+        });
+
+        
+        itt = function(){
+                if(count_word ==5)
+                {
+                    clearTimeout(timer);
+                    return;
+                }
+                else
+                {
+                    send30();
+                    timer = setTimeout(itt, 300);
+                }
+        }
+        function translate(){
+            count = 0
+            itt();
+        }
+        
+
+        function send30(){
+            if (count ==  30){
+                clearTimeout(timer)
+            }
+            else{
+                width=video.width;
+                height=video.height;
+                context.drawImage(video, 0, 0, width , height );
+                var data = canvas.toDataURL('image/jpeg', 0.5);
+                context.clearRect(0, 0, width,height );
+                frame_count.innerHTML = count;
+                console.log(count);
+                socket.emit('image', data); //image 이벤트가 발생하면 data를 서버에 송신 data를 받기 위해 서버에서는 image 이벤트리스트를 만들놔야함
+                count++;
+            }
+        }
+        
+
+        socket.on('response_back', function(data){
+            count_word++;
+            if(data == "failed")
+            {
+                var infoEl= document.getElementById('result'); 
+                infoEl.value = str+ "\n"+ "단어 인식에 실패하였습니다. 다시 동작해주세요.";
+                count_word--;
+                translate();
+            }
+            else
+            {
+                jb.innerHTML = "<p style = 'margin-top : -100px; text-align:center;font-size:30px;color:#ffffff'> 다음 단어를 입력해주세요.</p>";
+                str_save = str;
+                str += ' ' + data;
+                var infoEl = document.getElementById('result');
+                infoEl.value = str;
+                translate();
+            }
+        });
+    </script>
+</body>
+</html>
