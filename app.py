@@ -86,9 +86,9 @@ model.add(Dense(32, activation='relu'))
 model.add(Dense(actions.shape[0], activation='softmax'))
 
 model.compile(optimizer='Adam', loss ='categorical_crossentropy', metrics=['categorical_accuracy'])
-model.load_weights("C:/Users/MASTER/Desktop/Sign-Language-Translator/actionxhand_data0524_0513.h5") 
-rlf = joblib.load("C:/Users/MASTER/Desktop/Sign-Language-Translator/sentence_model.pkl")
-data = pd.read_excel("C:/Users/MASTER/Desktop/Sign-Language-Translator/sentence_data.xlsx", engine = 'openpyxl')
+model.load_weights("./actionxhand_data0524_0513.h5") 
+rlf = joblib.load("./sentence_model.pkl")
+data = pd.read_excel("./sentence_data.xlsx", engine = 'openpyxl')
 data_x = data.drop(['sentence'], axis = 1)
 data_y = data['sentence']
 le = LabelEncoder()
