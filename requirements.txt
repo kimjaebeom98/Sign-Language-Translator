@@ -1,0 +1,11 @@
+Flask
+flask_socketio
+natsort
+pillow
+opencv-python
+joblib
+pandas
+mediapipe
+tensorflow
+scikit-learn
+openpyxl
